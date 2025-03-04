@@ -27,7 +27,7 @@ def generate_hw01():
         for row in rows:
             crateDateTimeString = str.strip(row["CreateDate"])
             crateDateTime = datetime.datetime.strptime(crateDateTimeString,"%Y-%m-%d")
-            crateDateTimeStamp = int(time.mktime(crateDateTime.timetuple()))
+            crateDateTimeStamp = str(int(time.mktime(crateDateTime.timetuple())))
             collection.add(
                 ids=[row["ID"]],
                 documents=[row["HostWords"]],
@@ -63,5 +63,5 @@ def demo(question):
     )
     return collection
 
-# if __name__ == "__main__" :
-#     print(generate_hw01())
+if __name__ == "__main__" :
+    print(generate_hw01())
