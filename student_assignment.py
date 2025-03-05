@@ -3,6 +3,7 @@ import datetime
 import chromadb
 import csv
 
+import pandas as pd
 from chromadb.api.types import IncludeEnum
 from chromadb.utils import embedding_functions
 
@@ -46,28 +47,27 @@ def query_result_to_dictlist(query_result):
 
 def generate_hw01():
     collection = get_db_collection()
-    with open('COA_OpenData.csv', encoding="utf-8-sig") as csvfile:
-        rows = csv.DictReader(csvfile)
-        for row in rows:
-            crateDateTimeString = str.strip(row["CreateDate"])
-            crateDateTime = datetime.datetime.strptime(crateDateTimeString,"%Y-%m-%d")
-            crateDateTimeStamp = int(crateDateTime.timestamp())
-            metadata = {"file_name": "COA_OpenData.csv",
-                                "name": row["Name"],
-                                "type":row["Type"],
-                                "address":row["Address"],
-                                "tel":row["Tel"],
-                                "city":row["City"],
-                                "town":row["Town"],
-                                "date":crateDateTimeStamp}
-            get_result = collection.get([row["ID"]])
-            # print(get_result["ids"])
-            if len(get_result["ids"]) == 0:
-                # print("Document:", row["HostWords"], "Metadata:", metadata)
-                collection.add(
-                    ids=[row["ID"]],
-                    documents=[row["HostWords"]],
-                    metadatas=[metadata])
+    df = pd.read_csv("COA_OpenData.csv")
+    for idx, row in df.iterrows():
+        crateDateTimeString = str.strip(row["CreateDate"])
+        crateDateTime = datetime.datetime.strptime(crateDateTimeString, "%Y-%m-%d")
+        crateDateTimeStamp = int(crateDateTime.timestamp())
+        metadata = {"file_name": "COA_OpenData.csv",
+                    "name": row["Name"],
+                    "type": row["Type"],
+                    "address": row["Address"],
+                    "tel": row["Tel"],
+                    "city": row["City"],
+                    "town": row["Town"],
+                    "date": crateDateTimeStamp}
+        get_result = collection.get([row["ID"]])
+        # print(get_result["ids"])
+        if len(get_result["ids"]) == 0:
+            # print("Document:", row["HostWords"], "Metadata:", metadata)
+            collection.add(
+                ids=[row["ID"]],
+                documents=[row["HostWords"]],
+                metadatas=[metadata])
     return collection
 
 
