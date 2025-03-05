@@ -1,7 +1,6 @@
 import datetime
 
 import chromadb
-import csv
 
 import pandas as pd
 from chromadb.api.types import IncludeEnum
