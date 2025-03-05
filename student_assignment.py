@@ -46,7 +46,7 @@ def query_result_to_dictlist(query_result):
 
 def generate_hw01():
     collection = get_db_collection()
-    if collection.count() == 0:
+    if collection.count() > 0:
         return collection
     with open('COA_OpenData.csv', encoding="utf-8-sig") as csvfile:
         rows = csv.DictReader(csvfile)
