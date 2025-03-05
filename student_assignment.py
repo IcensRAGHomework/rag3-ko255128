@@ -49,7 +49,7 @@ def generate_hw01():
     if collection.count() == 0 :
         with open('COA_OpenData.csv', encoding="utf-8-sig") as csvfile:
             rows = csv.DictReader(csvfile)
-            for idx, row in enumerate(rows):
+            for row in rows:
                 crateDateTimeString = str.strip(row["CreateDate"])
                 crateDateTime = datetime.datetime.strptime(crateDateTimeString, "%Y-%m-%d")
                 crateDateTimeStamp = int(crateDateTime.timestamp())
@@ -61,14 +61,14 @@ def generate_hw01():
                             "city": row["City"],
                             "town": row["Town"],
                             "date": crateDateTimeStamp}
-                # get_result = collection.get([row["ID"]])
+                get_result = collection.get([str(row["ID"])])
                 # print(get_result["ids"])
-                # if len(get_result["ids"]) == 0:
+                if len(get_result["ids"]) == 0:
                     # print("Document:", row["HostWords"], "Metadata:", metadata)
-                collection.add(
-                    ids=[str(idx)],
-                    documents=[row["HostWords"]],
-                    metadatas=[metadata])
+                    collection.add(
+                        ids=[str(row["ID"])],
+                        documents=[row["HostWords"]],
+                        metadatas=[metadata])
     return collection
 
 
