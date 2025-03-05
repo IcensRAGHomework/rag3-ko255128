@@ -46,25 +46,25 @@ def query_result_to_dictlist(query_result):
 
 def generate_hw01():
     collection = get_db_collection()
-    df = pd.read_csv("COA_OpenData.csv")
-    for idx, row in df.iterrows():
-        crateDateTimeString = str.strip(row["CreateDate"])
-        crateDateTime = datetime.datetime.strptime(crateDateTimeString, "%Y-%m-%d")
-        crateDateTimeStamp = int(crateDateTime.timestamp())
-        metadata = {"file_name": "COA_OpenData.csv",
-                    "name": row["Name"],
-                    "type": row["Type"],
-                    "address": row["Address"],
-                    "tel": row["Tel"],
-                    "city": row["City"],
-                    "town": row["Town"],
-                    "date": crateDateTimeStamp}
-        get_result = collection.get([row["ID"]])
-        # print(get_result["ids"])
-        if len(get_result["ids"]) == 0:
+    if collection.count() == 0 :
+        df = pd.read_csv("COA_OpenData.csv")
+        for idx, row in df.iterrows():
+            crateDateTimeString = str.strip(row["CreateDate"])
+            crateDateTime = datetime.datetime.strptime(crateDateTimeString, "%Y-%m-%d")
+            crateDateTimeStamp = int(crateDateTime.timestamp())
+            metadata = {"file_name": "COA_OpenData.csv",
+                        "name": row["Name"],
+                        "type": row["Type"],
+                        "address": row["Address"],
+                        "tel": row["Tel"],
+                        "city": row["City"],
+                        "town": row["Town"],
+                        "date": crateDateTimeStamp}
+            get_result = collection.get([row["ID"]])
+            # print(get_result["ids"])
             # print("Document:", row["HostWords"], "Metadata:", metadata)
             collection.add(
-                ids=[row["ID"]],
+                ids=[str(idx)],
                 documents=[row["HostWords"]],
                 metadatas=[metadata])
     return collection
@@ -152,16 +152,16 @@ def generate_hw03(question, store_name, new_store_name, city, store_type):
     return result
 
 if __name__ == "__main__" :
-    # print(generate_hw01())
-    # print(generate_hw02("我想要找有關茶餐點的店家",
-    #                     ["宜蘭縣", "新北市"],
-    #                     ["美食"],
-    #                     datetime.datetime(2024, 4, 1),
-    #                     datetime.datetime(2024, 5, 1)))
-    # result = generate_hw03("我想要找南投縣的田媽媽餐廳，招牌是蕎麥麵",
-    #               "耄饕客棧",
-    #               "田媽媽（耄饕客棧）",
-    #               ["南投縣"],
-    #               ["美食"])
-    # print(result)
+    print(generate_hw01())
+    print(generate_hw02("我想要找有關茶餐點的店家",
+                        ["宜蘭縣", "新北市"],
+                        ["美食"],
+                        datetime.datetime(2024, 4, 1),
+                        datetime.datetime(2024, 5, 1)))
+    result = generate_hw03("我想要找南投縣的田媽媽餐廳，招牌是蕎麥麵",
+                  "耄饕客棧",
+                  "田媽媽（耄饕客棧）",
+                  ["南投縣"],
+                  ["美食"])
+    print(result)
     pass
