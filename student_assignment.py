@@ -1,5 +1,6 @@
 import csv
 import datetime
+from pathlib import Path
 
 import chromadb
 
@@ -48,7 +49,11 @@ def query_result_to_dictlist(query_result):
 
 def generate_hw01():
     collection = get_db_collection()
-    with open('COA_OpenData.csv', encoding="utf-8-sig") as csvfile:
+    csv_file = "COA_OpenData.csv"
+    if not Path(csv_file).exists():
+        print("File:", csv_file, "Not exists!")
+        return collection
+    with open(csv_file, encoding="utf-8-sig") as csvfile:
         rows = csv.DictReader(csvfile)
         for row in rows:
             row_keys = row.keys()
@@ -57,7 +62,7 @@ def generate_hw01():
             crateDateTimeString = str.strip(row["CreateDate"])
             crateDateTime = datetime.datetime.strptime(crateDateTimeString, "%Y-%m-%d")
             crateDateTimeStamp = int(crateDateTime.timestamp())
-            metadata = {"file_name": "COA_OpenData.csv",
+            metadata = {"file_name": csv_file,
                         "name": row["Name"],
                         "type": row["Type"],
                         "address": row["Address"],
