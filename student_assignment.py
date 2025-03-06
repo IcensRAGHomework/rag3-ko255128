@@ -14,6 +14,8 @@ gpt_emb_config = get_model_configuration(gpt_emb_version)
 dbpath = "./"
 
 
+csv_keys = ["ID", "Name", "Type", "Address", "Tel", "City", "Town", "CreateDate", "HostWords"]
+
 def get_db_collection():
     # 連接地端的database
     chroma_client = chromadb.PersistentClient(path=dbpath)
@@ -46,11 +48,12 @@ def query_result_to_dictlist(query_result):
 
 def generate_hw01():
     collection = get_db_collection()
-    if collection.count() > 0:
-        return collection
     with open('COA_OpenData.csv', encoding="utf-8-sig") as csvfile:
         rows = csv.DictReader(csvfile)
         for row in rows:
+            row_keys = row.keys()
+            if any(key not in row_keys for key in csv_keys):
+                continue
             crateDateTimeString = str.strip(row["CreateDate"])
             crateDateTime = datetime.datetime.strptime(crateDateTimeString, "%Y-%m-%d")
             crateDateTimeStamp = int(crateDateTime.timestamp())
@@ -62,14 +65,12 @@ def generate_hw01():
                         "city": row["City"],
                         "town": row["Town"],
                         "date": crateDateTimeStamp}
-            get_result = collection.get([str(row["ID"])])
-            # print([row["ID"]])
-            # print([str(row["ID"])])
-            # print(get_result["ids"])
+            get_result = collection.get([row["ID"]])
+            print([row["ID"]])
             if len(get_result["ids"]) == 0:
-                # print("Document:", row["HostWords"], "Metadata:", metadata)
+                print("Document:", row["HostWords"], "Metadata:", metadata)
                 collection.add(
-                    ids=[str(row["ID"])],
+                    ids=[row["ID"]],
                     documents=[row["HostWords"]],
                     metadatas=[metadata])
     return collection
